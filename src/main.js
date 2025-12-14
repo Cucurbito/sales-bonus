@@ -88,7 +88,7 @@ function analyzeSalesData(data, options) {
             if (!seller.products_sold[product.sku]) {
                 seller.products_sold[product.sku] = 0;
             }
-            seller.products_sold[product.sku].quantity += item.quantity;
+            seller.products_sold[product.sku] += item.quantity;
         });
     });
 
@@ -99,14 +99,11 @@ function analyzeSalesData(data, options) {
     sellerStats.forEach((seller, index) => {
         seller.bonus = calculateBonus(index, sellerStats.length, seller);
         seller.top_products = Object.entries(seller.products_sold)
-            .sort((a, b) => b[1].quantity - a[1].quantity)
-            .slice(0, 10)
             .map(([sku, quantity]) => ({
-                sku,
-                quantity: quantity.quantity
-            })
-
-            );
+                sku, quantity: Number(quantity)
+            }))
+            .sort((a, b) => b.quantity - a.quantity)
+            .slice(0, 10);
     });
 
     // @TODO: Подготовка итоговой коллекции с нужными полями
